@@ -1,0 +1,16 @@
+{
+  "name": "domain",
+  "module": "src/index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "prisma": "5.19.1"
+  },
+  "peerDependencies": {
+    "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "@prisma/client": "5.19.1",
+    "discord.js": "^14.16.1"
+  }
+}
