@@ -6,11 +6,10 @@ import PrismaError from "../exceptions/PrismaError";
 const client = new PrismaClient();
 
 export default {
-    create: async (domain: Domain): Promise<string> => {
+    create: async (domain: Domain): Promise<Domain> => {
         try {
             delete domain.content;
-            await client.user.create({ data: { ...domain } })
-            return `Subdominio adicionado com sucesso! Clique em "Verificar registro de DNS" para atualizar.`
+            return await client.user.create({ data: { ...domain } })
         } catch (e: unknown) {
 
             if (e instanceof PrismaClientKnownRequestError) {
@@ -18,14 +17,16 @@ export default {
             }
 
             console.error(`⭑｡𖦹°‧ » ${e}`);
-            return "Ocorreu um erro desconhecido."
+            throw new Error('Ocorreu um erro desconhecido.')
         }
     },
-    read: async (subdomain: string): Promise<boolean> => {
-        return Boolean(await client.user.findUnique({
-            where: {
-                subdomain
-            }
-        }))
+    getBySubDomain: async (subdomain: string): Promise<Domain | null> => {
+        return await client.user.findUnique({ where: { subdomain } })
+    },
+    getByUserId: async (userId: string): Promise<Domain | null> => {
+        return await client.user.findUnique({ where: { userId } })
+    },
+    deleteDNS: async (userId: string): Promise<void> => {
+        await client.user.delete({ where: { userId } })
     }
 }

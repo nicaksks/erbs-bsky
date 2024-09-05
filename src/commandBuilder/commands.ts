@@ -17,5 +17,9 @@ export default [
             .setMaxLength(255)
             .setRequired(true)
         )
-        .toJSON()
+        .toJSON(),
+    new SlashCommandBuilder()
+        .setName('unlink')
+        .setDescription('Desvincule sua conta (Você perderá o acesso ao seu @)')
+        .toJSON(),
 ]

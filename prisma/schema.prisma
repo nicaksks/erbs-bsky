@@ -9,10 +9,12 @@ datasource db {
 
 model User {
   id Int @id @default(autoincrement())
-  subdomain String @unique
-  domain String
   userId String @unique
-  hasSubDomain Boolean @default(false)
+  subdomain String @unique
+
+  recordId String @unique
+  domain String
+  
   createdAt DateTime  @default(now())
   updatedAt DateTime @updatedAt
 }
