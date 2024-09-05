@@ -2,3 +2,4 @@ node_modules
 .env
 atproto.db
 migrations
+tests

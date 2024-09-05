@@ -29,14 +29,16 @@ export default class Cloudflare {
     private readonly _zone: string = Bun.env.ZONE!;
     private readonly _domain: string = Bun.env.DOMAIN!;
 
-    constructor(private readonly user: User) { }
+    constructor(private user: User) {
+        this.user.subdomain = this.user.subdomain.trim().toLowerCase().replace(Bun.env.Domain!, "");
+    }
 
     public async addSubDomain(): Promise<string> {
         try {
 
-            const checkSub  = await client.read(this.user.subdomain);
-            
-            if(checkSub) return 'Esse subdomínio já está sendo usado por outra pessoa.';
+            const checkSub = await client.read(this.user.subdomain);
+
+            if (checkSub) return 'Esse subdomínio já está sendo usado por outra pessoa.';
 
             const response = await fetch(`${this._baseURL}/zones/${this._zone}/dns_records`, {
                 method: 'POST',
@@ -65,4 +67,19 @@ export default class Cloudflare {
             throw e
         }
     }
+
+    /*
+    public async getAllDNS(): Promise<void> {
+        const response = await fetch(`${this._baseURL}/zones/${this._zone}/dns_records`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': this._token
+            }
+        })
+
+        const data = await response.json();
+        console.log(data.result)
+    }
+    */
 }

@@ -33,7 +33,7 @@ client.on(Events.InteractionCreate, async interaction => {
 
             const cf = new Cloudflare({
                 userId: interaction.user.id,
-                subdomain: subdomain.trim().toLowerCase(),
+                subdomain,
                 content
             })
 

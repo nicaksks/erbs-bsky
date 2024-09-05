@@ -3,8 +3,8 @@ import commands from "./commandBuilder/commands";
 
 export default class Deploy extends REST {
 
-    private readonly _clientId: string = '';
-    private readonly _guildId: string = '';
+    private readonly _clientId: string = '1280994598558367815';
+    private readonly _guildId: string = '948849592169013268';
 
     constructor() {
         super({ version: '10' })
