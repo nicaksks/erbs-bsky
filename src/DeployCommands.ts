@@ -17,7 +17,7 @@ export default class DeployCommands extends REST {
     private async loadCommands(): Promise<void> {
         try {
             await this.commands()
-            
+
             const commands = this._commands.map(i => i.data);
 
             await this.put(Routes.applicationGuildCommands(this._clientId, this._guildId), {
@@ -42,11 +42,7 @@ export default class DeployCommands extends REST {
     public async command(commandName: string, interaction: CommandInteraction): Promise<void> {
         for (const command of this._commands) {
             if (command.data.name === commandName) {
-                if ('data' in command && 'execute' in command) {
-                    await command.execute(interaction);
-                } else {
-                    console.error('The format of this command is invalid. (≖‿≖)')
-                }
+                await command.execute(interaction);
             }
         }
     }
