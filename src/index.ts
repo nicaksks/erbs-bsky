@@ -1,8 +1,6 @@
 import { Client, Events, GatewayIntentBits } from 'discord.js';
 import env from './env';
-import Deploy from './Deploy';
-import set from './commands/set';
-import unlink from './commands/unlink';
+import DeployCommands from './DeployCommands';
 import PrismaError from './exceptions/PrismaError';
 import CloudError from './exceptions/CloudError';
 
@@ -16,23 +14,20 @@ const client = new Client({
     ]
 })
 
+const execute = new DeployCommands();
+
 client.once('ready', async () => {
     console.log('(੭˃ᴗ˂)੭ ➜ Homura Online!')
-    new Deploy()
 });
 
 client.on(Events.InteractionCreate, async interaction => {
     if (!interaction.isCommand()) return;
     try {
-        switch(interaction.commandName) {
-            case 'set': return await set(interaction)
-            case 'unlink': return await unlink(interaction)
-        }
-    } catch(e: unknown) {
+        await execute.command(interaction.commandName, interaction);
+    } catch (e: unknown) {
 
         if (e instanceof CloudError || e instanceof PrismaError) {
-            await interaction.editReply({ content: e.message })
-            return
+            return await interaction.editReply({ content: e.message })
         }
 
         console.error(`⭑｡𖦹°‧ » ${e}`);

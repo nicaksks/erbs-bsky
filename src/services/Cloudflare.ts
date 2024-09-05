@@ -1,4 +1,4 @@
-import client from "../database/client";
+import db from "../database/db";
 import CloudError from "../exceptions/CloudError";
 
 interface User {
@@ -21,8 +21,6 @@ enum Version {
 
 class Cloudflare {
 
-    private readonly _host: string = '_atproto';
-
     private readonly _baseURL: string = `https://api.cloudflare.com/client/v${Version.V4}`;
     private readonly _token: string = `Bearer ${Bun.env.API_TOKEN?.replace('Bearer', '')}`
 
@@ -32,8 +30,10 @@ class Cloudflare {
     public async addSubDomain(user: User): Promise<string> {
         try {
 
-            const validate = await client.getBySubDomain(user.subdomain);
-            if (validate) return 'Esse subdomínio já está sendo usado por outra pessoa.';
+            const getUsers = await db.getAll();
+            const validate = getUsers?.some((i: Domain) => i.userId === user.userId || i.subdomain === user.subdomain);
+            
+            if (validate) return 'Você já possui um subdomínio ou esse dominio já está sendo usado por outra pessoa.';
 
             const response = await fetch(`${this._baseURL}/zones/${this._zone}/dns_records`, {
                 method: 'POST',
@@ -44,7 +44,7 @@ class Cloudflare {
                 body: JSON.stringify({
                     comment: "",
                     content: user.content,
-                    name: `${this._host}.${user.subdomain}.${this._domain}`,
+                    name: `_atproto.${user.subdomain}.${this._domain}`,
                     type: 'TXT'
                 })
             })
@@ -52,7 +52,7 @@ class Cloudflare {
             const data = await response.json();
             if (data.errors.length >= 1) throw new CloudError(data?.errors[0].code);
 
-            await client.create({
+            await db.create({
                 ...user,
                 recordId: data.result.id,
                 domain: `${user.subdomain}.${this._domain}`
@@ -67,10 +67,10 @@ class Cloudflare {
 
     public async deleteDNS(userId: string): Promise<string> {
 
-        const user = await client.getByUserId(userId);
-        if (!user) return 'Você não possui um subdomínio vinculado ao seu Id.';
+        const user = await db.getByUserId(userId);
+        if (!user?.userId) return 'Você não possui um subdomínio vinculado ao seu Id.';
 
-        const response = await fetch(`${this._baseURL}/zones/${this._zone}/dns_records/${user.recordId}`, {
+        const response = await fetch(`${this._baseURL}/zones/${this._zone}/dns_records/${user?.recordId}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -82,7 +82,7 @@ class Cloudflare {
 
         if (data.errors.length >= 1) throw new CloudError(data?.errors[0].code);
 
-        await client.deleteDNS(userId);
+        await db.deleteDNS(userId);
         return 'Pronto! Agora você pode adicionar um novo subdominio na sua conta.'
     }
 }

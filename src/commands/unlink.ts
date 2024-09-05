@@ -1,11 +1,16 @@
-import type { CommandInteraction } from "discord.js";
+import { SlashCommandBuilder, type CommandInteraction } from "discord.js";
 import Cloudflare from "../services/Cloudflare";
 
-export default async (interaction: CommandInteraction): Promise<void> => {
-    await interaction.deferReply({ ephemeral: true })
+export default {
+    data: new SlashCommandBuilder()
+        .setName('unlink')
+        .setDescription('Desvincule sua conta (Você perderá o acesso ao seu @)'),
+    execute: async (interaction: CommandInteraction): Promise<void> => {
+        await interaction.deferReply({ ephemeral: true })
 
-    const userId = interaction.user.id;
-    const del = await Cloudflare.deleteDNS(userId);
+        const userId = interaction.user.id;
+        const del = await Cloudflare.deleteDNS(userId);
 
-    await interaction.editReply({ content: del });
+        await interaction.editReply({ content: del });
+    }
 }

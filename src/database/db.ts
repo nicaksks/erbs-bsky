@@ -20,8 +20,8 @@ export default {
             throw new Error('Ocorreu um erro desconhecido.')
         }
     },
-    getBySubDomain: async (subdomain: string): Promise<Domain | null> => {
-        return await client.user.findUnique({ where: { subdomain } })
+    getAll: async (): Promise<Array<Domain> | null> => {
+        return await client.user.findMany({})
     },
     getByUserId: async (userId: string): Promise<Domain | null> => {
         return await client.user.findUnique({ where: { userId } })
