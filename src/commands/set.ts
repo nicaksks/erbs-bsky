@@ -32,7 +32,7 @@ export default {
 
         const message = await Cloudflare.addSubDomain({
             userId: interaction.user.id,
-            subdomain: subdomain.trim().toLocaleLowerCase(),
+            subdomain: subdomain.trim().toLowerCase(),
             content
         });
 
