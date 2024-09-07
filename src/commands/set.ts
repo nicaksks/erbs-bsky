@@ -23,11 +23,16 @@ export default {
         await interaction.deferReply({ ephemeral: true })
 
         const subdomain = interaction.options.get('subdomain')?.value as string;
+
+        if (/[^\w\s]/g.test(subdomain)) {
+            return await interaction.editReply({ content: 'Subdominio não pode ter símbolo.' })
+        }
+
         const content = interaction.options.get('content')?.value as string;
 
         const message = await Cloudflare.addSubDomain({
             userId: interaction.user.id,
-            subdomain,
+            subdomain: subdomain.trim().toLocaleLowerCase(),
             content
         });
 

@@ -14,8 +14,6 @@ const client = new Client({
     ]
 })
 
-const execute = new DeployCommands();
-
 client.once('ready', async () => {
     console.log('(੭˃ᴗ˂)੭ ➜ Homura Online!')
 });
@@ -23,7 +21,7 @@ client.once('ready', async () => {
 client.on(Events.InteractionCreate, async interaction => {
     if (!interaction.isCommand()) return;
     try {
-        await execute.command(interaction.commandName, interaction);
+        await DeployCommands.command(interaction.commandName, interaction);
     } catch (e: unknown) {
 
         if (e instanceof CloudError || e instanceof PrismaError) {

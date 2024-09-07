@@ -1,7 +1,7 @@
 import { CommandInteraction, REST, Routes } from "discord.js";
 import fs from 'node:fs';
 
-export default class DeployCommands extends REST {
+class DeployCommands extends REST {
 
     private readonly _clientId: string = '1280994598558367815';
     private readonly _guildId: string = '948849592169013268';
@@ -58,3 +58,5 @@ export default class DeployCommands extends REST {
         return commandDefault.default
     }
 }
+
+export default new DeployCommands();
