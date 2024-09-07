@@ -68,7 +68,7 @@ class Cloudflare {
     public async deleteDNS(userId: string): Promise<string> {
 
         const user = await db.getByUserId(userId);
-        if (!user?.userId) return 'Você não possui um subdomínio vinculado ao seu Id.';
+        if (!user) return 'Você não possui um subdomínio vinculado ao seu Id.';
 
         const response = await fetch(`${this._baseURL}/zones/${this._zone}/dns_records/${user?.recordId}`, {
             method: 'DELETE',
@@ -79,8 +79,7 @@ class Cloudflare {
         })
 
         const data = await response.json();
-
-        if (data.errors.length >= 1) throw new CloudError(data?.errors[0].code);
+        if (data.errors?.length >= 1) throw new CloudError(data?.errors[0].code);
 
         await db.deleteDNS(userId);
         return 'Pronto! Agora você pode adicionar um novo subdominio na sua conta.'
