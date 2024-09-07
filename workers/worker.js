@@ -5,7 +5,7 @@ export default {
       const { hostname } = new URL(request.url);
       
       if (hostname.split('.').length >= 3) {
-        return Response.redirect(baseURL + hostname.replace('@', ''));
+        return Response.redirect(baseURL + hostname);
       }
   
       return new Response(`
